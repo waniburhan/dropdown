@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Country & Language Selector - Design Study</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        /* --- Global Styles --- */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f4f7f6;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .design-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 25px;
+            margin: 20px auto;
+            max-width: 900px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a2533;
+            margin-bottom: 40px;
+        }
+        
+        h2 {
+            border-bottom: 2px solid #e0e0e0;
+            padding-bottom: 10px;
+            margin-top: 0;
+            color: #0056b3;
+        }
+        
+        a {
+            color: #0056b3;
+            text-decoration: none;
+        }
+        
+        button, .button-like {
+            cursor: pointer;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 10px 15px;
+            background-color: #f8f9fa;
+        }
+        
+        button:hover, .button-like:hover {
+            background-color: #e9ecef;
+        }
+        
+        .flag {
+            width: 24px;
+            height: auto;
+            margin-right: 10px;
+            vertical-align: middle;
+            border: 1px solid #eee;
+        }
+
+        /* --- Design 1: Minimalist Dropdown --- */
+        .d1-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .d1-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 250px;
+            max-height: 300px;
+            overflow-y: auto;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 10;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .d1-dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+        }
+        .d1-dropdown-content a:hover {
+            background-color: #f1f1f1
+        }
+        .d1-dropdown:hover .d1-dropdown-content {
+            display: block;
+        }
+
+        /* --- Design 2: Flag-centric Grid --- */
+        .d2-flag-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 20px;
+        }
+        .d2-flag-grid-item {
+            text-align: center;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            cursor: pointer;
+        }
+        .d2-flag-grid-item:hover {
+            background-color: #f0f5ff;
+        }
+        .d2-flag-grid-item img {
+            width: 50px;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 50%;
+            margin-bottom: 8px;
+        }
+        .d2-flag-grid-item p {
+            margin: 0;
+            font-size: 14px;
+        }
+
+        /* --- Design 3: Two-column Layout --- */
+        .d3-two-column-selector {
+            display: flex;
+            gap: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 15px;
+            min-height: 300px;
+        }
+        .d3-column {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .d3-column h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .d3-column ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .d3-column li a {
+            display: block;
+            padding: 8px 10px;
+            border-radius: 4px;
+        }
+        .d3-column li a:hover, .d3-column li a.selected {
+            background-color: #e9ecef;
+        }
+        #d3-language-col {
+            border-left: 1px solid #ccc;
+            padding-left: 20px;
+        }
+
+        /* --- Design 4: Searchable Dropdown --- */
+        .d4-searchable-dropdown {
+            position: relative;
+            display: inline-block;
+            max-width: 300px;
+        }
+        .d4-search-input {
+            width: 100%;
+            padding: 10px 15px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+        }
+        .d4-content {
+            display: none;
+            position: absolute;
+            background-color: white;
+            width: 100%;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 10;
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .d4-content a {
+            color: black;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+        }
+        .d4-content a:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* --- Design 5: Modal Dialog --- */
+        .d5-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            -webkit-animation-name: fadeIn;
+            -webkit-animation-duration: 0.4s;
+            animation-name: fadeIn;
+            animation-duration: 0.4s
+        }
+        .d5-modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: 10% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 600px;
+            border-radius: 8px;
+            -webkit-animation-name: slideIn;
+            -webkit-animation-duration: 0.4s;
+            animation-name: slideIn;
+            animation-duration: 0.4s
+        }
+        .d5-close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .d5-close:hover, .d5-close:focus {
+            color: black;
+            cursor: pointer;
+        }
+        .d5-list {
+            list-style: none;
+            padding: 0;
+            max-height: 40vh;
+            overflow-y: auto;
+        }
+        .d5-list li a {
+            display: block;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .d5-list li a:hover {
+            background: #f4f4f4;
+        }
+        @-webkit-keyframes slideIn { from {top:-300px; opacity:0} to {top:0; opacity:1} }
+        @keyframes slideIn { from {top:-300px; opacity:0} to {top:0; opacity:1} }
+        @-webkit-keyframes fadeIn { from {opacity:0} to {opacity:1} }
+        @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+
+        /* --- Design 6: Globe Icon with Popover --- */
+        .d6-popover-container {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+        .d6-globe-icon {
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+        }
+        .d6-popover-content {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            margin-top: 10px;
+            background-color: #fff;
+            min-width: 250px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 10;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+        .d6-popover-content a {
+            color: black;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+        }
+        .d6-popover-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .d6-popover-container:hover .d6-popover-content {
+            display: block;
+        }
+
+        /* --- Design 7: Split Button with Accordion Dropdown --- */
+        .d7-split-button-container {
+            position: relative;
+            display: inline-block;
+        }
+        .d7-split-button {
+            display: flex;
+        }
+        .d7-split-button .d7-main-action {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+            border-right: none;
+        }
+        .d7-split-button .d7-dropdown-toggle {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        .d7-dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #fff;
+            min-width: 350px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 10;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .d7-split-button-container.active .d7-dropdown-content {
+            display: block;
+        }
+        .d7-accordion-item .d7-accordion-header {
+            padding: 12px 16px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #eee;
+        }
+        .d7-accordion-item .d7-accordion-header:hover {
+            background-color: #f1f1f1;
+        }
+        .d7-accordion-body {
+            display: none;
+            background-color: #fafafa;
+            padding-left: 20px;
+        }
+        .d7-accordion-body a {
+            display: block;
+            color: black;
+            padding: 10px 16px;
+            border-bottom: 1px solid #eee;
+        }
+        .d7-accordion-body a:hover {
+            background-color: #e9ecef;
+        }
+        .d7-accordion-item.active .d7-accordion-body {
+            display: block;
+        }
+        .d7-accordion-item.active .fa-chevron-down {
+            transform: rotate(180deg);
+        }
+
+        /* --- Design 8: Mega Menu --- */
+        .d8-mega-menu-container {
+            position: relative;
+        }
+        .d8-mega-menu {
+            display: none;
+            position: absolute;
+            left: 0;
+            background-color: white;
+            width: 100%;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 10;
+            padding: 20px;
+            box-sizing: border-box;
+            border-radius: 0 0 8px 8px;
+            border: 1px solid #ddd;
+            border-top: none;
+        }
+        .d8-mega-menu-container:hover .d8-mega-menu {
+            display: flex;
+            flex-wrap: wrap;
+        }
+        .d8-mega-menu-column {
+            flex: 1 1 180px;
+            padding: 0 15px;
+        }
+        .d8-mega-menu-column h3 {
+            font-size: 16px;
+            color: #0056b3;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+        .d8-mega-menu-column a {
+            display: flex;
+            align-items: center;
+            padding: 8px 0;
+            font-size: 14px;
+            color: #333;
+        }
+        .d8-mega-menu-column a:hover {
+            color: #007bff;
+        }
+
+        /* --- Design 9: Side-sliding Panel --- */
+        .d9-sidenav {
+            height: 100%;
+            width: 0;
+            position: fixed;
+            z-index: 1000;
+            top: 0;
+            right: 0;
+            background-color: #1a2533;
+            overflow-x: hidden;
+            transition: 0.5s;
+            padding-top: 60px;
+        }
+        .d9-sidenav .d9-content a {
+            padding: 10px 15px 10px 32px;
+            text-decoration: none;
+            font-size: 18px;
+            color: #8191a0;
+            display: flex;
+            align-items: center;
+            transition: 0.3s;
+        }
+        .d9-sidenav a:hover {
+            color: #f1f1f1;
+        }
+        .d9-sidenav .d9-closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        /* --- Design 10: Interactive Map Placeholder --- */
+        .d10-map-placeholder {
+            width: 100%;
+            height: 400px;
+            background-color: #e0e0e0;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #666;
+            font-size: 18px;
+            background-image: url('https://i.imgur.com/g0a12xR.png');
+            background-size: cover;
+            background-position: center;
+        }
+
+    </style>
+</head>
+<body>
+
+    <h1>Country & Language Selector - Design Study</h1>
+
+    <div class="design-container">
+        <h2>Design 1: Minimalist Dropdown</h2>
+        <div class="d1-dropdown">
+            <button>Select Region <i class="fas fa-chevron-down fa-xs"></i></button>
+            <div class="d1-dropdown-content" id="d1-content">
+                </div>
+        </div>
+    </div>
+
+    <div class="design-container">
+        <h2>Design 2: Flag-centric Grid</h2>
+        <div class="d2-flag-grid" id="d2-grid">
+            </div>
+    </div>
+
+    <div class="design-container">
+        <h2>Design 3: Two-column Layout</h2>
+        <div class="d3-two-column-selector">
+            <div class="d3-column">
+                <h3>Country</h3>
+                <ul id="d3-country-list">
+                    </ul>
+            </div>
+            <div class="d3-column" id="d3-language-col">
+                <h3>Language</h3>
+                <ul id="d3-language-list">
+                    <li style="color: #888;">Select a country to see available languages.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <div class="design-container">
+        <h2>Design 4: Searchable Dropdown</h2>
+        <div class="d4-searchable-dropdown">
+            <input type="text" class="d4-search-input" id="d4-input" placeholder="Search for a country...">
+            <div class="d4-content" id="d4-content">
+                 </div>
+        </div>
+    </div>
+    
+    <div class="design-container">
+        <h2>Design 5: Modal Dialog</h2>
+        <button id="d5-open-btn" class="button-like">Select Country & Language</button>
+        <div id="d5-modal" class="d5-modal">
+            <div class="d5-modal-content">
+                <span id="d5-close-btn" class="d5-close">&times;</span>
+                <h2>Select your Region</h2>
+                <ul class="d5-list" id="d5-list">
+                    </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="design-container">
+        <h2>Design 6: Globe Icon with Popover</h2>
+        <div class="d6-popover-container">
+            <img src="https://www.sanofistudies.com/static/img/blocks/assets/country_flags/global.svg" alt="Globe Icon" class="d6-globe-icon">
+            <div class="d6-popover-content" id="d6-content">
+                </div>
+        </div>
+    </div>
+    
+    <div class="design-container">
+        <h2>Design 7: Split Button & Accordion Dropdown</h2>
+        <div class="d7-split-button-container" id="d7-container">
+            <div class="d7-split-button">
+                <button class="d7-main-action" id="d7-selected-option">United States / English</button>
+                <button class="d7-dropdown-toggle" id="d7-toggle-btn"><i class="fas fa-chevron-down"></i></button>
+            </div>
+            <div class="d7-dropdown-content" id="d7-content">
+                </div>
+        </div>
+    </div>
+    
+    <div class="design-container">
+        <h2>Design 8: Mega Menu</h2>
+        <div class="d8-mega-menu-container">
+            <button>Choose Your Region <i class="fas fa-chevron-down fa-xs"></i></button>
+            <div class="d8-mega-menu" id="d8-menu">
+                </div>
+        </div>
+    </div>
+    
+    <div class="design-container">
+        <h2>Design 9: Side-sliding Panel</h2>
+        <button onclick="openNav()">Open Region Selector</button>
+        <div id="d9-sidenav" class="d9-sidenav">
+            <a href="javascript:void(0)" class="d9-closebtn" onclick="closeNav()">&times;</a>
+            <div class="d9-content" id="d9-content">
+                 </div>
+        </div>
+    </div>
+    
+    <div class="design-container">
+        <h2>Design 10: Interactive Map (Placeholder)</h2>
+        <div class="d10-map-placeholder">
+            <p>
+                An interactive map would be implemented here using a library like Leaflet.js or Google Maps API.
+                <br>Users would click on a country to see available languages.
+            </p>
+        </div>
+    </div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // --- Data ---
+        const flagBaseUrl = 'https://www.sanofistudies.com/static/img/blocks/assets/country_flags/';
+        const countries = [
+            { name: 'Global', code: 'global', flag: 'global.svg', region: 'Global', languages: [{ name: 'English', code: 'en' }] },
+            { name: 'Argentina', code: 'ar', flag: 'ar.svg', region: 'South America', languages: [{ name: 'Spanish', code: 'es' }] },
+            { name: 'Australia', code: 'au', flag: 'au.svg', region: 'Oceania', languages: [{ name: 'English', code: 'en' }] },
+            { name: 'Brazil', code: 'br', flag: 'br.svg', region: 'South America', languages: [{ name: 'Portuguese', code: 'pt' }] },
+            { name: 'Canada', code: 'ca', flag: 'ca.svg', region: 'North America', languages: [{ name: 'English', code: 'en' }, { name: 'French', code: 'fr' }] },
+            { name: 'Chile', code: 'cl', flag: 'cl.svg', region: 'South America', languages: [{ name: 'Spanish', code: 'es' }] },
+            { name: 'Czechia', code: 'cz', flag: 'cz.svg', region: 'Europe', languages: [{ name: 'Czech', code: 'cs' }] },
+            { name: 'France', code: 'fr', flag: 'fr.svg', region: 'Europe', languages: [{ name: 'French', code: 'fr' }] },
+            { name: 'Germany', code: 'de', flag: 'de.svg', region: 'Europe', languages: [{ name: 'German', code: 'de' }] },
+            { name: 'India', code: 'in', flag: 'in.svg', region: 'Asia', languages: [{ name: 'English', code: 'en' }, { name: 'Hindi', code: 'hi' }] },
+            { name: 'Italy', code: 'it', flag: 'it.svg', region: 'Europe', languages: [{ name: 'Italian', code: 'it' }] },
+            { name: 'Mexico', code: 'mx', flag: 'mx.svg', region: 'North America', languages: [{ name: 'Spanish', code: 'es' }] },
+            { name: 'Poland', code: 'pl', flag: 'pl.svg', region: 'Europe', languages: [{ name: 'Polish', code: 'pl' }] },
+            { name: 'South Africa', code: 'za', flag: 'za.svg', region: 'Africa', languages: [{ name: 'Afrikaans', code: 'af' }, { name: 'English', code: 'en' }, { name: 'Xhosa', code: 'xh' }, { name: 'Zulu', code: 'zu' }] },
+            { name: 'Spain', code: 'es', flag: 'es.svg', region: 'Europe', languages: [{ name: 'Spanish', code: 'es' }] },
+            { name: 'Sweden', code: 'se', flag: 'se.svg', region: 'Europe', languages: [{ name: 'Swedish', code: 'sv' }] },
+            { name: 'United Kingdom', code: 'gb', flag: 'gb.svg', region: 'Europe', languages: [{ name: 'English', code: 'en' }] },
+            { name: 'United States', code: 'us', flag: 'us.svg', region: 'North America', languages: [{ name: 'English', code: 'en' }, { name: 'Spanish', code: 'es' }] }
+        ];
+
+        // --- Helper Function to create a selector item ---
+        function createSelectorItem(country, language) {
+            return `<img class="flag" src="${flagBaseUrl}${country.flag}" alt="${country.name} flag"> ${country.name} / ${language.name}`;
+        }
+
+        // --- Populate Designs ---
+        
+        // Design 1: Minimalist Dropdown
+        const d1Content = document.getElementById('d1-content');
+        countries.forEach(country => {
+            country.languages.forEach(lang => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.innerHTML = createSelectorItem(country, lang);
+                d1Content.appendChild(link);
+            });
+        });
+
+        // Design 2: Flag-centric Grid
+        const d2Grid = document.getElementById('d2-grid');
+        countries.forEach(country => {
+            if (country.code !== 'global') {
+                 const item = document.createElement('div');
+                 item.className = 'd2-flag-grid-item';
+                 item.innerHTML = `<img src="${flagBaseUrl}${country.flag}" alt="${country.name} flag"><p>${country.name}</p>`;
+                 d2Grid.appendChild(item);
+            }
+        });
+
+        // Design 3: Two-column Layout
+        const d3CountryList = document.getElementById('d3-country-list');
+        const d3LanguageList = document.getElementById('d3-language-list');
+        countries.forEach(country => {
+            const li = document.createElement('li');
+            const link = document.createElement('a');
+            link.href = '#';
+            link.dataset.countryCode = country.code;
+            link.innerHTML = `<img class="flag" src="${flagBaseUrl}${country.flag}" alt="${country.name} flag"> ${country.name}`;
+            li.appendChild(link);
+            d3CountryList.appendChild(li);
+        });
+        d3CountryList.addEventListener('click', function(e) {
+            e.preventDefault();
+            const targetLink = e.target.closest('a');
+            if (targetLink) {
+                // Style management
+                d3CountryList.querySelectorAll('a').forEach(a => a.classList.remove('selected'));
+                targetLink.classList.add('selected');
+                
+                const countryCode = targetLink.dataset.countryCode;
+                const selectedCountry = countries.find(c => c.code === countryCode);
+                d3LanguageList.innerHTML = '';
+                if (selectedCountry) {
+                    selectedCountry.languages.forEach(lang => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<a href="#">${lang.name}</a>`;
+                        d3LanguageList.appendChild(li);
+                    });
+                }
+            }
+        });
+        
+        // Design 4: Searchable Dropdown
+        const d4Input = document.getElementById('d4-input');
+        const d4Content = document.getElementById('d4-content');
+        countries.forEach(country => {
+            country.languages.forEach(lang => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.innerHTML = createSelectorItem(country, lang);
+                d4Content.appendChild(link);
+            });
+        });
+        d4Input.addEventListener('focus', () => d4Content.style.display = 'block');
+        document.addEventListener('click', (e) => {
+           if (!e.target.closest('.d4-searchable-dropdown')) {
+               d4Content.style.display = 'none';
+           }
+        });
+        d4Input.addEventListener('keyup', function() {
+            const filter = d4Input.value.toUpperCase();
+            const links = d4Content.getElementsByTagName('a');
+            for (let i = 0; i < links.length; i++) {
+                const txtValue = links[i].textContent || links[i].innerText;
+                links[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+            }
+        });
+        
+        // Design 5: Modal Dialog
+        const modal = document.getElementById('d5-modal');
+        const openBtn = document.getElementById('d5-open-btn');
+        const closeBtn = document.getElementById('d5-close-btn');
+        const d5List = document.getElementById('d5-list');
+        countries.forEach(country => {
+            country.languages.forEach(lang => {
+                const li = document.createElement('li');
+                const link = document.createElement('a');
+                link.href = '#';
+                link.innerHTML = createSelectorItem(country, lang);
+                li.appendChild(link);
+                d5List.appendChild(li);
+            });
+        });
+        openBtn.onclick = () => modal.style.display = "block";
+        closeBtn.onclick = () => modal.style.display = "none";
+        window.onclick = (event) => {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+        
+        // Design 6: Globe Icon with Popover
+        const d6Content = document.getElementById('d6-content');
+        countries.forEach(country => {
+            country.languages.forEach(lang => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.innerHTML = createSelectorItem(country, lang);
+                d6Content.appendChild(link);
+            });
+        });
+
+        // Design 7: Split Button & Accordion
+        const d7Container = document.getElementById('d7-container');
+        const d7ToggleBtn = document.getElementById('d7-toggle-btn');
+        const d7Content = document.getElementById('d7-content');
+        const d7SelectedOption = document.getElementById('d7-selected-option');
+        countries.forEach(country => {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'd7-accordion-item';
+
+            const headerDiv = document.createElement('div');
+            headerDiv.className = 'd7-accordion-header';
+            headerDiv.innerHTML = `
+                <span><img class="flag" src="${flagBaseUrl}${country.flag}" alt=""> ${country.name}</span>
+                ${country.languages.length > 1 ? '<i class="fas fa-chevron-down fa-xs"></i>' : ''}
+            `;
+            itemDiv.appendChild(headerDiv);
+            
+            if (country.languages.length > 1) {
+                const bodyDiv = document.createElement('div');
+                bodyDiv.className = 'd7-accordion-body';
+                country.languages.forEach(lang => {
+                    const langLink = document.createElement('a');
+                    langLink.href = '#';
+                    langLink.dataset.value = `${country.name} / ${lang.name}`;
+                    langLink.textContent = lang.name;
+                    bodyDiv.appendChild(langLink);
+                });
+                itemDiv.appendChild(bodyDiv);
+                headerDiv.addEventListener('click', () => {
+                    itemDiv.classList.toggle('active');
+                });
+            } else {
+                 headerDiv.addEventListener('click', () => {
+                     d7SelectedOption.textContent = `${country.name} / ${country.languages[0].name}`;
+                     d7Container.classList.remove('active');
+                 });
+            }
+            d7Content.appendChild(itemDiv);
+        });
+        d7ToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            d7Container.classList.toggle('active');
+        });
+        d7Content.addEventListener('click', (e) => {
+            if (e.target.tagName === 'A' && e.target.dataset.value) {
+                d7SelectedOption.textContent = e.target.dataset.value;
+                d7Container.classList.remove('active');
+            }
+        });
+        document.addEventListener('click', (e) => {
+           if (!e.target.closest('#d7-container')) {
+               d7Container.classList.remove('active');
+           }
+        });
+
+
+        // Design 8: Mega Menu
+        const d8Menu = document.getElementById('d8-menu');
+        const regions = [...new Set(countries.map(c => c.region))];
+        regions.forEach(region => {
+            const column = document.createElement('div');
+            column.className = 'd8-mega-menu-column';
+            column.innerHTML = `<h3>${region}</h3>`;
+            
+            countries.filter(c => c.region === region).forEach(country => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.innerHTML = `<img class="flag" src="${flagBaseUrl}${country.flag}" alt=""> ${country.name}`;
+                column.appendChild(link);
+            });
+            d8Menu.appendChild(column);
+        });
+        
+        // Design 9: Side Panel
+        const d9Content = document.getElementById('d9-content');
+        countries.forEach(country => {
+            country.languages.forEach(lang => {
+                const link = document.createElement('a');
+                link.href = '#';
+                link.innerHTML = createSelectorItem(country, lang);
+                d9Content.appendChild(link);
+            });
+        });
+        
+    }); // End DOMContentLoaded
+    
+    // Global functions for Design 9
+    function openNav() {
+        document.getElementById("d9-sidenav").style.width = "300px";
+    }
+
+    function closeNav() {
+        document.getElementById("d9-sidenav").style.width = "0";
+    }
+    </script>
+</body>
+</html>
